@@ -8,11 +8,11 @@ import { redirect } from "next/navigation";
 export default async function MembersPage() {
   const user = await getCurrentUser();
   if (!can(user.role, "members:view")) redirect("/dashboard");
-  const members = await db.member.findMany({
+  const [members, plans] = await Promise.all([db.member.findMany({
     where: { organizationId: user.organizationId },
     orderBy: { createdAt: "desc" },
     select: { id: true, name: true, phone: true, email: true, status: true, joiningDate: true, gender: true, dateOfBirth: true, address: true, emergencyContact: true },
-  });
+  }), db.membershipPlan.findMany({ where: { organizationId: user.organizationId, isActive: true }, orderBy: { name: "asc" }, select: { id: true, name: true, price: true, durationInDays: true } })]);
 
   return (
     <div className="space-y-6">
@@ -27,6 +27,7 @@ export default async function MembersPage() {
         <CardContent className="p-0">
           <MemberWorkspace
             members={members.map((member) => ({ ...member, joiningDate: member.joiningDate.toISOString(), dateOfBirth: member.dateOfBirth?.toISOString() ?? null }))}
+            plans={plans.map((plan) => ({ ...plan, price: plan.price.toString() }))}
             canEdit={can(user.role, "members:update")}
             canDeactivate={can(user.role, "members:deactivate")}
             canCreate={can(user.role, "members:create")}

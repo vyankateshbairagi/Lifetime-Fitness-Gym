@@ -169,6 +169,8 @@ model Member {
   // memberCode is human-assigned (e.g. "GYM-0001") and must be unique per gym,
   // not globally, so multiple gyms can each start their own numbering.
   @@unique([organizationId, memberCode])
+  @@unique([organizationId, phone])
+  @@unique([organizationId, email])
   @@index([organizationId])
   @@index([phone])
   @@index([status])

@@ -5,9 +5,11 @@ import { AttendanceWorkspace } from "@/components/attendance/attendance-workspac
 import { db } from "@/lib/db";
 import { getCurrentUser } from "@/lib/auth";
 import { can } from "@/lib/permissions";
+import { closeStaleAttendance } from "@/lib/attendance-cleanup";
+import { businessDateKey } from "@/lib/attendance-time";
 
 function dateKey(value: Date) { return value.toISOString().slice(0, 10); }
-function today() { const now = new Date(); return new Date(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate())); }
+function today(timeZone: string) { return new Date(`${businessDateKey(new Date(), timeZone)}T00:00:00.000Z`); }
 function first(value: string | string[] | undefined) { return Array.isArray(value) ? value[0] : value; }
 
 export default async function AttendancePage({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
@@ -15,14 +17,15 @@ export default async function AttendancePage({ searchParams }: { searchParams: P
   if (!can(user.role, "attendance:view")) redirect("/dashboard");
   const params = await searchParams;
   const search = first(params.search)?.trim() ?? "";
-  const selectedDate = first(params.date) ?? dateKey(today());
+  const selectedDate = first(params.date) ?? dateKey(today(user.organization.timezone));
   const status = first(params.status) ?? "ALL";
   const page = Math.max(1, Number(first(params.page) ?? "1") || 1);
   const pageSize = 20;
   const day = new Date(`${selectedDate}T00:00:00.000Z`);
   const nextDay = new Date(day); nextDay.setUTCDate(nextDay.getUTCDate() + 1);
-  const currentDay = today();
+  const currentDay = today(user.organization.timezone);
   const currentNextDay = new Date(currentDay); currentNextDay.setUTCDate(currentNextDay.getUTCDate() + 1);
+  await closeStaleAttendance(db, user.organizationId, user.organization.timezone);
   const where: Prisma.AttendanceWhereInput = { organizationId: user.organizationId, date: { gte: day, lt: nextDay } };
   if (search) where.member = { OR: [{ name: { contains: search, mode: "insensitive" } }, { phone: { contains: search, mode: "insensitive" } }] };
   if (status === "CURRENT") where.checkOutTime = null;

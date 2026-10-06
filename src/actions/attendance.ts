@@ -5,10 +5,12 @@ import { db } from "@/lib/db";
 import { requireAuth } from "@/lib/auth";
 import { can } from "@/lib/permissions";
 import { checkInSchema, checkOutSchema } from "@/lib/validations/attendance";
+import { closeStaleAttendance } from "@/lib/attendance-cleanup";
+import { businessDateKey } from "@/lib/attendance-time";
 
 type ActionResult = { success: boolean; message: string; fieldErrors?: Record<string, string> };
 function fieldErrors(error: { issues: { path: PropertyKey[]; message: string }[] }) { return Object.fromEntries(error.issues.map((issue) => [String(issue.path[0]), issue.message])); }
-function todayDate() { const now = new Date(); return new Date(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate())); }
+function todayDate(timeZone: string) { return new Date(`${businessDateKey(new Date(), timeZone)}T00:00:00.000Z`); }
 function activeSubscriptionWhere(today: Date) { return { status: "ACTIVE" as const, startDate: { lte: today }, endDate: { gte: today } }; }
 
 export async function checkInMember(input: unknown): Promise<ActionResult> {
@@ -16,9 +18,10 @@ export async function checkInMember(input: unknown): Promise<ActionResult> {
   if (!can(user.role, "attendance:create")) return { success: false, message: "You do not have permission to check in members." };
   const parsed = checkInSchema.safeParse(input);
   if (!parsed.success) return { success: false, message: "Please select a member.", fieldErrors: fieldErrors(parsed.error) };
-  const date = todayDate();
+  const date = todayDate(user.organization.timezone);
   try {
     const result = await db.$transaction(async (tx) => {
+      await closeStaleAttendance(tx, user.organizationId, user.organization.timezone);
       const member = await tx.member.findFirst({ where: { id: parsed.data.memberId, organizationId: user.organizationId }, select: { id: true, name: true } });
       if (!member) throw new Error("MEMBER_NOT_FOUND");
       const subscription = await tx.subscription.findFirst({ where: { organizationId: user.organizationId, memberId: member.id, ...activeSubscriptionWhere(new Date()) }, select: { id: true } });
