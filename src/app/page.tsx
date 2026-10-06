@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import {
   Activity,
@@ -10,7 +11,6 @@ import {
   MessageCircle,
   PersonStanding,
   ShieldCheck,
-  Sparkles,
   Target,
   Users,
 } from "lucide-react";
@@ -82,22 +82,21 @@ export default async function HomePage() {
     <PublicPage>
       <section id="home" className="relative isolate overflow-hidden bg-slate-950 text-white">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_75%_20%,rgba(226,27,35,0.2),transparent_30%),radial-gradient(circle_at_20%_90%,rgba(226,27,35,0.08),transparent_35%)]" />
-        <div className="relative mx-auto grid min-h-[calc(100svh-5rem)] max-w-7xl items-center gap-12 px-6 py-20 sm:px-10 lg:grid-cols-[1.05fr_0.95fr] lg:px-12 lg:py-28">
+        <div className="absolute bottom-0 left-0 h-px w-1/3 bg-red-600" />
+        <div className="relative mx-auto grid min-h-[min(760px,calc(100svh-5rem))] max-w-7xl items-center gap-12 px-6 py-16 sm:px-10 lg:grid-cols-[0.9fr_1.1fr] lg:px-12 lg:py-24">
           <div className="max-w-3xl">
-            <p className="mb-6 flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.24em] text-emerald-300">
-              <Sparkles className="size-4" /> LifeTime Fitness Gym
+            <p className="mb-5 flex items-center gap-2 text-xs font-bold uppercase tracking-[0.28em] text-emerald-300">
+              <span className="h-px w-8 bg-red-600" /> LifeTime Fitness Gym | Pune
             </p>
-            <h1 className="text-5xl font-semibold leading-[0.98] tracking-tight sm:text-7xl">
+            <h1 className="max-w-2xl text-5xl font-black uppercase leading-[0.9] tracking-[-0.04em] sm:text-7xl lg:text-[5.5rem]">
               Build strength.
-              <br />
-              Build confidence.
-              <br />
-              Become your best.
+              <br />Build confidence.
+              <br /><span className="text-red-600">Become your best.</span>
             </h1>
-            <p className="mt-7 max-w-xl text-lg leading-8 text-slate-300 sm:text-xl">
+            <p className="mt-7 max-w-lg text-base leading-7 text-slate-300 sm:text-lg">
               Your journey to a stronger, healthier, and more confident you starts here.
             </p>
-            <div className="mt-9 flex flex-col gap-3 sm:flex-row">
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <Link href="#plans" className="inline-flex items-center justify-center gap-2 rounded-lg bg-emerald-400 px-6 py-3.5 text-sm font-semibold text-slate-950 transition hover:bg-emerald-300 focus:outline-none focus:ring-2 focus:ring-emerald-300 focus:ring-offset-2 focus:ring-offset-slate-950">
                 Join now <ArrowRight className="size-4" />
               </Link>
@@ -106,24 +105,31 @@ export default async function HomePage() {
               </Link>
             </div>
           </div>
-          <div aria-hidden="true" className="relative mx-auto flex aspect-[4/5] w-full max-w-md items-end overflow-hidden rounded-[2rem] border border-white/10 bg-gradient-to-br from-emerald-400/30 via-slate-900 to-blue-500/20 p-8 shadow-2xl shadow-black/30">
-            <div className="absolute inset-6 rounded-[1.5rem] border border-white/10" />
-            <div className="absolute right-8 top-8 flex size-24 items-center justify-center rounded-full border border-emerald-300/40 bg-emerald-300/10">
-              <Dumbbell className="size-9 text-emerald-200" />
-            </div>
-            <div className="relative">
-              <p className="text-7xl font-semibold tracking-tight text-white/90">01</p>
-              <p className="mt-2 max-w-xs text-sm leading-6 text-slate-300">One good session. Then another. Momentum is built one choice at a time.</p>
+          <div aria-hidden="true" className="relative mx-auto aspect-[1.15/1] w-full max-w-2xl overflow-hidden border border-white/15 bg-[#0d0d0d] shadow-2xl shadow-black/50">
+            <div className="absolute inset-0 bg-[linear-gradient(120deg,transparent_40%,rgba(226,27,35,0.24),transparent_70%)]" />
+            <div className="absolute -right-16 -top-24 size-80 rounded-full border-[18px] border-red-600/20" />
+            <div className="absolute -bottom-40 -left-20 size-96 rounded-full border-[28px] border-white/5" />
+            <Image src="/lifetime-fitness-gym-logo.png" alt="" fill className="relative z-10 object-contain p-10 sm:p-16" />
+            <div className="absolute bottom-0 left-0 z-20 flex w-full items-center justify-between border-t border-white/15 bg-black/75 px-5 py-4 text-[10px] font-bold uppercase tracking-[0.2em] text-white sm:px-8">
+              <span>Train with purpose</span><span className="text-red-500">01 / 01</span>
             </div>
           </div>
+        </div>
+        <div className="relative mx-auto grid max-w-7xl grid-cols-2 border-t border-white/10 px-6 sm:grid-cols-4 sm:px-10 lg:px-12">
+          {[["01", "Focused training"], ["02", "Flexible plans"], ["03", "Pune location"], ["04", "Supportive community"]].map(([number, label]) => (
+            <div key={number} className="border-r border-white/10 px-4 py-5 first:border-l sm:px-6">
+              <p className="text-lg font-black text-red-600">{number}</p>
+              <p className="mt-1 text-[10px] font-bold uppercase tracking-widest text-slate-300">{label}</p>
+            </div>
+          ))}
         </div>
       </section>
 
       <section id="about" className="scroll-mt-20 bg-white px-6 py-20 sm:px-10 lg:px-12 lg:py-28">
-        <div className="mx-auto grid max-w-7xl gap-12 lg:grid-cols-[1.05fr_0.95fr] lg:items-start">
+        <div className="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:items-start">
           <div>
             <p className="text-sm font-semibold uppercase tracking-[0.2em] text-emerald-600">About LifeTime Fitness</p>
-            <h2 className="mt-4 text-4xl font-semibold tracking-tight text-slate-950 sm:text-5xl">A stronger routine starts with the right place.</h2>
+            <h2 className="mt-4 max-w-2xl text-4xl font-black uppercase leading-tight tracking-tight text-slate-950 sm:text-5xl">A stronger routine starts with the right place.</h2>
             <p className="mt-6 text-lg leading-8 text-slate-600">LifeTime Fitness Gym is a dedicated fitness destination in the heart of Pune, designed to help you become stronger, healthier, and more confident. With quality equipment, a motivating training environment, and a focus on consistent progress, we welcome beginners and experienced fitness enthusiasts alike. Whether your goal is to build muscle, improve strength, lose weight, or simply live a healthier lifestyle, LifeTime Fitness Gym is here to support your journey.</p>
             <div className="mt-8 grid gap-4 text-sm text-slate-700 sm:grid-cols-2">
               <p className="flex gap-3"><MapPin className="size-5 shrink-0 text-emerald-600" /> Guruwar Peth, Pune</p>
@@ -131,7 +137,7 @@ export default async function HomePage() {
               <p className="flex gap-3"><MessageCircle className="size-5 shrink-0 text-emerald-600" /> 8446648527</p>
             </div>
           </div>
-          <div className="rounded-3xl bg-slate-950 p-8 text-white sm:p-10">
+          <div className="border border-white/10 bg-slate-950 p-8 text-white sm:p-10">
             <p className="text-sm font-semibold uppercase tracking-[0.2em] text-emerald-300">Why choose us</p>
             <ul className="mt-7 grid gap-5 sm:grid-cols-2">
               {reasons.map((reason) => <li key={reason} className="flex gap-3 text-sm text-slate-300"><Check className="size-5 shrink-0 text-emerald-300" />{reason}</li>)}

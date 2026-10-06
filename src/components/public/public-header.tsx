@@ -31,7 +31,7 @@ export function PublicHeader() {
           {links.map(([label, href]) => <Link key={href} href={href} className="text-sm font-semibold uppercase tracking-wide text-slate-300 transition-colors hover:text-emerald-600">{label}</Link>)}
           <Button asChild className="bg-[#e21b23] font-bold text-white hover:bg-[#ff3038]"><Link href="/login">Login</Link></Button>
         </nav>
-        <button type="button" className="inline-flex size-10 items-center justify-center rounded-lg border border-slate-200 text-slate-700 lg:hidden" aria-label={open ? "Close navigation menu" : "Open navigation menu"} aria-expanded={open} onClick={() => setOpen(!open)}>
+        <button type="button" className="inline-flex size-10 items-center justify-center rounded-lg border border-white/20 text-white lg:hidden" aria-label={open ? "Close navigation menu" : "Open navigation menu"} aria-expanded={open} onClick={() => setOpen(!open)}>
           {open ? <X className="size-5" /> : <Menu className="size-5" />}
         </button>
       </div>
