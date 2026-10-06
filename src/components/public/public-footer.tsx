@@ -21,7 +21,7 @@ export function PublicFooter() {
         <div className="grid gap-12 border-b border-white/10 pb-14 lg:grid-cols-[1.5fr_0.7fr_1fr_1.1fr] lg:gap-10">
           <div>
             <Image
-              src="/lifetime-fitness-gym-logo.png"
+              src="/lifetime-fitness-gym-logo.webp"
               alt="Lifetime Fitness Gym"
               width={148}
               height={83}

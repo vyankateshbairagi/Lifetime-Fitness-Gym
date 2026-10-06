@@ -21,9 +21,9 @@ import { db } from "@/lib/db";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "LifeTime Fitness Gym | Pune",
+  title: "Lifetime Fitness Gym | Pune",
   description:
-    "LifeTime Fitness Gym in Guruwar Peth, Pune. Build strength, improve fitness, and become your best with quality equipment, training support, and flexible membership options.",
+    "Lifetime Fitness Gym in Guruwar Peth, Pune. Build strength, improve fitness, and become your best with quality equipment, training support, and flexible membership options.",
 };
 
 const services = [
@@ -86,7 +86,7 @@ export default async function HomePage() {
         <div className="relative mx-auto grid min-h-[min(760px,calc(100svh-5rem))] max-w-7xl items-center gap-12 px-6 py-16 sm:px-10 lg:grid-cols-[0.9fr_1.1fr] lg:px-12 lg:py-24">
           <div className="max-w-3xl">
             <p className="mb-5 flex items-center gap-2 text-xs font-bold uppercase tracking-[0.28em] text-emerald-300">
-              <span className="h-px w-8 bg-red-600" /> LifeTime Fitness Gym | Pune
+              <span className="h-px w-8 bg-red-600" /> Lifetime Fitness Gym | Pune
             </p>
             <h1 className="max-w-2xl text-5xl font-black uppercase leading-[0.9] tracking-[-0.04em] sm:text-7xl lg:text-[5.5rem]">
               Build strength.
@@ -109,7 +109,7 @@ export default async function HomePage() {
             <div className="absolute inset-0 bg-[linear-gradient(120deg,transparent_40%,rgba(226,27,35,0.24),transparent_70%)]" />
             <div className="absolute -right-16 -top-24 size-80 rounded-full border-[18px] border-red-600/20" />
             <div className="absolute -bottom-40 -left-20 size-96 rounded-full border-[28px] border-white/5" />
-            <Image src="/lifetime-fitness-gym-logo.png" alt="" fill className="relative z-10 object-contain p-10 sm:p-16" />
+            <Image src="/lifetime-fitness-gym-logo.webp" alt="" fill priority className="relative z-10 object-contain p-10 sm:p-16" />
             <div className="absolute bottom-0 left-0 z-20 flex w-full items-center justify-between border-t border-white/15 bg-black/75 px-5 py-4 text-[10px] font-bold uppercase tracking-[0.2em] text-white sm:px-8">
               <span>Train with purpose</span><span className="text-red-500">01 / 01</span>
             </div>
@@ -128,9 +128,9 @@ export default async function HomePage() {
       <section id="about" className="scroll-mt-20 bg-white px-6 py-20 sm:px-10 lg:px-12 lg:py-28">
         <div className="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:items-start">
           <div>
-            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-emerald-600">About LifeTime Fitness</p>
+            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-emerald-600">About Lifetime Fitness</p>
             <h2 className="mt-4 max-w-2xl text-4xl font-black uppercase leading-tight tracking-tight text-slate-950 sm:text-5xl">A stronger routine starts with the right place.</h2>
-            <p className="mt-6 text-lg leading-8 text-slate-600">LifeTime Fitness Gym is a dedicated fitness destination in the heart of Pune, designed to help you become stronger, healthier, and more confident. With quality equipment, a motivating training environment, and a focus on consistent progress, we welcome beginners and experienced fitness enthusiasts alike. Whether your goal is to build muscle, improve strength, lose weight, or simply live a healthier lifestyle, LifeTime Fitness Gym is here to support your journey.</p>
+            <p className="mt-6 text-lg leading-8 text-slate-600">Lifetime Fitness Gym is a dedicated fitness destination in the heart of Pune, designed to help you become stronger, healthier, and more confident. With quality equipment, a motivating training environment, and a focus on consistent progress, we welcome beginners and experienced fitness enthusiasts alike. Whether your goal is to build muscle, improve strength, lose weight, or simply live a healthier lifestyle, Lifetime Fitness Gym is here to support your journey.</p>
             <div className="mt-8 grid gap-4 text-sm text-slate-700 sm:grid-cols-2">
               <p className="flex gap-3"><MapPin className="size-5 shrink-0 text-emerald-600" /> Guruwar Peth, Pune</p>
               <p className="flex gap-3"><Activity className="size-5 shrink-0 text-emerald-600" /> 6:00 AM – 10:00 AM &amp; 4:00 PM – 10:00 PM</p>
