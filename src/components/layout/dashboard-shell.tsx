@@ -63,8 +63,8 @@ export function DashboardShell({
 
             <div className="flex items-center gap-2 md:hidden">
               <Image
-                src="/gymflow-fitness-logo.png"
-                alt="GymFlow Fitness"
+                src="/lifetime-fitness-gym-logo.png"
+                alt="Lifetime Fitness Gym"
                 width={116}
                 height={64}
                 className="h-10 w-auto object-contain"

@@ -13,7 +13,7 @@ export default function LoginPage() {
             <div className="mb-2 flex size-12 items-center justify-center rounded-full bg-muted">
               <LogIn className="size-6 text-muted-foreground" />
             </div>
-            <CardTitle>Sign in to GymFlow</CardTitle>
+            <CardTitle>Sign in to Lifetime Fitness Gym</CardTitle>
           </CardHeader>
           <CardContent>
             <LoginForm />
@@ -23,8 +23,8 @@ export default function LoginPage() {
       <aside className="relative hidden min-h-screen items-center justify-center overflow-hidden bg-gradient-to-br from-emerald-50 via-background to-blue-50 p-8 lg:flex">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(16,185,129,0.12),transparent_55%)]" />
         <Image
-          src="/gymflow-fitness-logo.png"
-          alt="GymFlow Fitness"
+          src="/lifetime-fitness-gym-logo.png"
+          alt="Lifetime Fitness Gym"
           width={420}
           height={236}
           className="relative h-auto w-[min(28rem,80%)] object-contain drop-shadow-xl"

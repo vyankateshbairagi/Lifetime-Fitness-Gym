@@ -3,6 +3,12 @@ import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
 
+if (process.env.NODE_ENV === "production") {
+  throw new Error(
+    "Demo seed is disabled in production. Create production accounts using the approved onboarding procedure."
+  );
+}
+
 const adapter = new PrismaPg({
   connectionString: process.env.DATABASE_URL,
 });

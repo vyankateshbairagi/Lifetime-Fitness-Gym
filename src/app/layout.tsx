@@ -7,8 +7,19 @@ import "./globals.css";
 // you want a custom typeface.
 
 export const metadata: Metadata = {
-  title: "GymFlow — Gym Management System",
-  description: "Manage members, plans, subscriptions, and payments.",
+  title: "Lifetime Fitness Gym — Gym Management System",
+  description: "Lifetime Fitness Gym management system for members, plans, subscriptions, and payments.",
+  applicationName: "Lifetime Fitness Gym",
+  openGraph: {
+    title: "Lifetime Fitness Gym — Gym Management System",
+    description: "Manage members, plans, subscriptions, and payments.",
+    type: "website",
+  },
+  twitter: {
+    card: "summary",
+    title: "Lifetime Fitness Gym — Gym Management System",
+    description: "Manage members, plans, subscriptions, and payments.",
+  },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

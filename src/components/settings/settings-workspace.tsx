@@ -213,7 +213,7 @@ function PreferencesSection({
       <div>
         <h2 className="text-base font-semibold">Preferences</h2>
         <p className="text-sm text-muted-foreground">
-          Used for how amounts and dates are displayed across GymFlow.
+          Used for how amounts and dates are displayed across Lifetime Fitness Gym.
         </p>
       </div>
       <Separator />
@@ -436,7 +436,7 @@ function StaffSection({
         <div>
           <h2 className="text-base font-semibold">Staff Accounts</h2>
           <p className="text-sm text-muted-foreground">
-            Accounts your staff use to sign in to GymFlow. Owners aren&apos;t listed here.
+            Accounts your staff use to sign in to Lifetime Fitness Gym. Owners aren&apos;t listed here.
           </p>
         </div>
         <Button onClick={() => setDialog("add")}>

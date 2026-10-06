@@ -43,8 +43,8 @@ export function SidebarNav({
     <div className="flex h-full flex-col">
       <div className="flex items-center gap-3 border-b border-border/80 px-4 py-4">
         <Image
-          src="/gymflow-fitness-logo.png"
-          alt="GymFlow Fitness"
+          src="/lifetime-fitness-gym-logo.png"
+          alt="Lifetime Fitness Gym"
           width={150}
           height={84}
           className="h-14 w-auto object-contain"
