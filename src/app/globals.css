@@ -94,3 +94,99 @@ body {
 ::selection {
   background: color-mix(in srgb, var(--primary) 18%, transparent);
 }
+
+/* Public marketing surfaces use the logo's black, red, and white identity
+   without changing the dashboard theme. */
+.public-site {
+  --brand-red: #e21b23;
+  background: #090909;
+  color: #f8f8f8;
+}
+
+.public-site .bg-white,
+.public-site .bg-slate-50,
+.public-site .bg-emerald-50,
+.public-site .bg-emerald-50\/70 {
+  background-color: #111111 !important;
+}
+
+.public-site .bg-slate-950 {
+  background-color: #090909 !important;
+}
+
+.public-site .text-slate-950,
+.public-site .text-slate-900,
+.public-site .text-slate-800 {
+  color: #ffffff !important;
+}
+
+.public-site .text-slate-700,
+.public-site .text-slate-600,
+.public-site .text-slate-500,
+.public-site .text-slate-400 {
+  color: #b6b6b6 !important;
+}
+
+.public-site .text-emerald-600,
+.public-site .text-emerald-700,
+.public-site .text-emerald-300,
+.public-site .text-emerald-200 {
+  color: var(--brand-red) !important;
+}
+
+.public-site .bg-emerald-400,
+.public-site .bg-emerald-600,
+.public-site .bg-blue-700 {
+  background-color: var(--brand-red) !important;
+}
+
+.public-site .border-slate-200,
+.public-site .border-slate-300,
+.public-site .border-slate-700 {
+  border-color: #343434 !important;
+}
+
+.public-site .border-emerald-500,
+.public-site .border-emerald-300 {
+  border-color: var(--brand-red) !important;
+}
+
+.public-site .bg-emerald-50 {
+  color: #ffffff;
+}
+
+.public-site .hover\:bg-emerald-300:hover,
+.public-site .hover\:bg-emerald-400:hover {
+  background-color: #ff3038 !important;
+}
+
+.public-site .hover\:text-emerald-600:hover,
+.public-site .hover\:text-emerald-700:hover,
+.public-site .hover\:text-emerald-300:hover {
+  color: #ff3038 !important;
+}
+
+.public-site .hover\:border-emerald-300:hover {
+  border-color: var(--brand-red) !important;
+}
+
+.public-site .from-emerald-400\/30,
+.public-site .from-emerald-400\/20,
+.public-site .from-emerald-600,
+.public-site .to-blue-500\/20,
+.public-site .to-blue-700 {
+  --tw-gradient-from: #24090a !important;
+  --tw-gradient-to: #090909 !important;
+}
+
+.public-site .bg-emerald-100 {
+  background-color: #321012 !important;
+}
+
+.public-site .text-slate-300 {
+  color: #d0d0d0 !important;
+}
+
+.public-site .bg-gradient-to-br {
+  background-image: linear-gradient(135deg, #1b0809, #090909) !important;
+}

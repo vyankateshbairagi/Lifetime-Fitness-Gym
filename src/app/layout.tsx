@@ -7,24 +7,24 @@ import "./globals.css";
 // you want a custom typeface.
 
 export const metadata: Metadata = {
-  title: "Lifetime Fitness Gym — Gym Management System",
-  description: "Lifetime Fitness Gym management system for members, plans, subscriptions, and payments.",
+  title: "Lifetime Fitness Gym",
+  description: "Train with purpose. Move better. Build your best routine.",
   applicationName: "Lifetime Fitness Gym",
   openGraph: {
-    title: "Lifetime Fitness Gym — Gym Management System",
-    description: "Manage members, plans, subscriptions, and payments.",
+    title: "Lifetime Fitness Gym",
+    description: "Train with purpose. Move better. Build your best routine.",
     type: "website",
   },
   twitter: {
     card: "summary",
-    title: "Lifetime Fitness Gym — Gym Management System",
-    description: "Manage members, plans, subscriptions, and payments.",
+    title: "Lifetime Fitness Gym",
+    description: "Train with purpose. Move better. Build your best routine.",
   },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" className="h-full antialiased">
+    <html lang="en" data-scroll-behavior="smooth" className="h-full antialiased">
       <body className="min-h-full flex flex-col font-sans">{children}</body>
     </html>
   );

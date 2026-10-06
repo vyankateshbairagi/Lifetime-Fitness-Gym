@@ -11,7 +11,8 @@
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:headed": "playwright test --headed",
     "test:e2e:report": "playwright show-report",
-    "test:e2e:seed": "tsx scripts/seed-e2e.ts"
+    "test:e2e:seed": "tsx scripts/seed-e2e.ts",
+    "bootstrap:production": "tsx scripts/bootstrap-production.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.9.1",

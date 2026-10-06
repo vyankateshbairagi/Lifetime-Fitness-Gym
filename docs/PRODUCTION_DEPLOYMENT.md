@@ -39,11 +39,15 @@ Do not commit it, put it in `.env.example`, or reuse a local or E2E secret.
    ```text
    DATABASE_URL=<the new Lifetime Fitness Gym production database URL>
    SESSION_SECRET=<a new production-only random secret>
+   PUBLIC_ORGANIZATION_SLUG=<the exact production Organization slug>
    ```
 
 3. Do not configure production with `E2E_DATABASE_URL`, E2E credentials, or
    the local `.env` values.
-4. Leave `NODE_ENV` managed by Vercel as `production`.
+4. `PUBLIC_ORGANIZATION_SLUG` is read only on the server and scopes the public
+   homepage's active membership plans to the intended Organization. Do not
+   rename it to a `NEXT_PUBLIC_*` variable.
+5. Leave `NODE_ENV` managed by Vercel as `production`.
 
 ## 5. Deploy and apply migrations
 
@@ -65,13 +69,57 @@ npx prisma migrate reset
 Never run the demo seed against production. `prisma/seed.ts` intentionally
 refuses to run when `NODE_ENV=production`.
 
-## 6. Create the initial Owner account
+## 6. Initial Production Owner Bootstrap
 
-Do not create a public owner-creation endpoint and do not place credentials in
-source code. Use the approved secure server-side onboarding procedure for the
-deployment. If no such procedure has been approved yet, create the first
-Owner through a controlled administrative process using a temporary,
-unique password, then require the client to change it.
+The repository includes a one-time, server-side administrative bootstrap
+script. It is not a Next.js route, API endpoint, Server Action, or public URL.
+Run it only from a controlled operator environment against a confirmed fresh
+production database.
+
+Before running it:
+
+1. Confirm `DATABASE_URL` points to the **new Lifetime Fitness Gym production
+   Neon database**.
+2. Confirm Prisma migrations have already been applied with
+   `npx prisma migrate deploy`.
+3. Set `NODE_ENV=production`.
+4. Set `BOOTSTRAP_PRODUCTION=true`.
+5. Set these values through the operator environment, without placing them in
+   source control:
+
+   ```text
+   BOOTSTRAP_ORG_NAME=<production organization name>
+   BOOTSTRAP_ORG_SLUG=<unique production organization slug>
+   BOOTSTRAP_OWNER_NAME=<initial owner name>
+   BOOTSTRAP_OWNER_EMAIL=<initial owner email>
+   BOOTSTRAP_OWNER_PASSWORD=<temporary unique owner password>
+   ```
+
+   Supply the password through an environment variable rather than a command
+   line argument so it does not become part of shell history. The script never
+   prints the password, hash, database URL, or session secret.
+6. Run:
+
+   ```powershell
+   npm run bootstrap:production
+   ```
+
+The script refuses to run unless both `NODE_ENV=production` and
+`BOOTSTRAP_PRODUCTION=true` are present. It aborts if the organization slug or
+owner email already exists, and creates the Organization and OWNER User in one
+transaction. It never updates, deletes, deactivates, or resets existing
+records.
+
+After a successful bootstrap:
+
+1. Verify the Owner can log in at `/login`.
+2. Confirm the Owner can access Settings.
+3. Configure the organization.
+4. Create Staff accounts through the normal Settings UI.
+5. Remove or unset all `BOOTSTRAP_*` environment variables immediately.
+6. Never run the bootstrap script against an existing populated production
+   database, or again unless intentionally bootstrapping a new deployment
+   against a fresh database.
 
 After the initial Owner exists:
 
