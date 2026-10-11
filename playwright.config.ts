@@ -1,6 +1,6 @@
 import { defineConfig, devices } from "@playwright/test";
 
-const port = 3100;
+const port = process.env.PORT ? Number(process.env.PORT) : 3000;
 
 export default defineConfig({
   testDir: "./tests/e2e",
@@ -18,8 +18,8 @@ export default defineConfig({
   },
   webServer: {
     command: `npx next dev --hostname 127.0.0.1 --port ${port}`,
-    url: `http://127.0.0.1:${port}/login`,
-    reuseExistingServer: false,
+    url: `http://127.0.0.1:${port}`,
+    reuseExistingServer: true,
     timeout: 120_000,
     env: {
       ...(process.env.E2E_DATABASE_URL
@@ -33,6 +33,11 @@ export default defineConfig({
   },
   projects: [
     {
+      name: "public",
+      testMatch: /public-site\.spec\.ts/,
+      use: { ...devices["Desktop Chrome"] },
+    },
+    {
       name: "setup",
       testMatch: /auth\.setup\.ts/,
       use: { ...devices["Desktop Chrome"] },
@@ -40,7 +45,7 @@ export default defineConfig({
     {
       name: "chromium",
       dependencies: ["setup"],
-      testIgnore: /auth\.setup\.ts/,
+      testIgnore: [/auth\.setup\.ts/, /public-site\.spec\.ts/],
       use: { ...devices["Desktop Chrome"] },
     },
     {
