@@ -12,8 +12,8 @@ export type ReportsData = {
   members: { total: number; active: number; newMembers: number; expiring: number };
   attendance: { today: number; trend: { date: string; count: number }[] };
   revenueTrend: { month: string; amount: string }[];
-  expiringMemberships: { member: string; plan: string; endDate: string; daysRemaining: number }[];
-  payments: { id: string; date: string; member: string; amount: string; method: string; status: string; reference: string }[];
+  expiringMemberships: { member: string; phone?: string; plan: string; endDate: string; daysRemaining: number }[];
+  payments: { id: string; date: string; member: string; phone?: string; amount: string; method: string; status: string; reference: string }[];
 };
 
 function dateKey(value: Date) { return value.toISOString().slice(0, 10); }
@@ -42,7 +42,7 @@ export async function getReportsData(organizationId: string, requestedRange?: st
   const today = dayStart(new Date());
   const tomorrow = addDays(today, 1);
   const [payments, collectedAggregate, refundAggregate, financialPayments, financialExpenses, subscriptions, totalMembers, activeMembers, newMembers, todayAttendance, attendanceRows, expiring] = await Promise.all([
-    db.payment.findMany({ where: { organizationId, paymentDate: { gte: range.start, lt: range.end } }, orderBy: { paymentDate: "desc" }, take: 100, select: { id: true, amount: true, paymentMethod: true, paymentDate: true, receiptNumber: true, status: true, originalPaymentId: true, member: { select: { name: true } } } }),
+    db.payment.findMany({ where: { organizationId, paymentDate: { gte: range.start, lt: range.end } }, orderBy: { paymentDate: "desc" }, take: 100, select: { id: true, amount: true, paymentMethod: true, paymentDate: true, receiptNumber: true, status: true, originalPaymentId: true, member: { select: { name: true, phone: true } } } }),
     db.payment.aggregate({ where: { organizationId, paymentDate: { gte: range.start, lt: range.end }, originalPaymentId: null, status: { notIn: ["FAILED", "VOIDED"] } }, _sum: { amount: true } }),
     db.payment.aggregate({ where: { organizationId, paymentDate: { gte: range.start, lt: range.end }, originalPaymentId: { not: null }, status: { in: ["REFUNDED", "PARTIALLY_REFUNDED"] } }, _sum: { amount: true } }),
     db.payment.findMany({ where: { organizationId, paymentDate: { gte: range.start, lt: range.end } }, select: { amount: true, paymentDate: true, paymentMethod: true, status: true, originalPaymentId: true } }),
@@ -53,7 +53,7 @@ export async function getReportsData(organizationId: string, requestedRange?: st
     db.member.count({ where: { organizationId, createdAt: { gte: range.start, lt: range.end } } }),
     db.attendance.count({ where: { organizationId, date: { gte: today, lt: tomorrow } } }),
     db.attendance.groupBy({ by: ["date"], where: { organizationId, date: { gte: range.start, lt: range.end } }, _count: { _all: true }, orderBy: { date: "asc" } }),
-    db.subscription.findMany({ where: { organizationId, status: "ACTIVE", endDate: { gte: today, lt: addDays(today, 8) } }, orderBy: { endDate: "asc" }, take: 20, select: { endDate: true, member: { select: { name: true } }, plan: { select: { name: true } } } }),
+    db.subscription.findMany({ where: { organizationId, status: "ACTIVE", endDate: { gte: today, lt: addDays(today, 8) } }, orderBy: { endDate: "asc" }, take: 20, select: { endDate: true, member: { select: { name: true, phone: true } }, plan: { select: { name: true } } } }),
   ]);
 
   const collected = collectedAggregate._sum.amount ?? new Prisma.Decimal(0);
@@ -83,7 +83,7 @@ export async function getReportsData(organizationId: string, requestedRange?: st
   const yearPayments = await db.payment.findMany({ where: { organizationId, paymentDate: { gte: yearsStart }, originalPaymentId: null, status: { notIn: ["FAILED", "VOIDED"] as PaymentStatus[] } }, select: { amount: true, paymentDate: true } });
   const revenueTrend = Array.from({ length: 12 }, (_, month) => { const values = yearPayments.filter((payment) => payment.paymentDate.getUTCMonth() === month).map((payment) => payment.amount); return { month: monthLabel(new Date(Date.UTC(new Date().getUTCFullYear(), month, 1))), amount: money(sum(values)) }; });
 
-  return { range, financial: { collected: money(collected), refunds: money(refunds), revenue: money(collected.minus(refunds)), outstanding: money(outstanding.greaterThan(0) ? outstanding : new Prisma.Decimal(0)), expenses: money(expenses), netCashFlow: money(collected.minus(expenses)), paymentCount: paymentRows.length, expenseCount: financialExpenses.length }, paymentMethods, expenseBreakdown, financialTrend, members: { total: totalMembers, active: activeMembers, newMembers, expiring: expiring.length }, attendance: { today: todayAttendance, trend: attendanceRows.map((row) => ({ date: dateKey(row.date), count: row._count._all })) }, revenueTrend, expiringMemberships: expiring.map((item) => ({ member: item.member.name, plan: item.plan.name, endDate: dateKey(item.endDate), daysRemaining: Math.max(0, Math.ceil((item.endDate.getTime() - today.getTime()) / 86400000)) })), payments: payments.map((payment) => ({ id: payment.id, date: dateKey(payment.paymentDate), member: payment.member.name, amount: money(payment.amount), method: payment.paymentMethod, status: payment.status, reference: payment.receiptNumber })) };
+  return { range, financial: { collected: money(collected), refunds: money(refunds), revenue: money(collected.minus(refunds)), outstanding: money(outstanding.greaterThan(0) ? outstanding : new Prisma.Decimal(0)), expenses: money(expenses), netCashFlow: money(collected.minus(expenses)), paymentCount: paymentRows.length, expenseCount: financialExpenses.length }, paymentMethods, expenseBreakdown, financialTrend, members: { total: totalMembers, active: activeMembers, newMembers, expiring: expiring.length }, attendance: { today: todayAttendance, trend: attendanceRows.map((row) => ({ date: dateKey(row.date), count: row._count._all })) }, revenueTrend, expiringMemberships: expiring.map((item) => ({ member: item.member.name, phone: item.member.phone, plan: item.plan.name, endDate: dateKey(item.endDate), daysRemaining: Math.max(0, Math.ceil((item.endDate.getTime() - today.getTime()) / 86400000)) })), payments: payments.map((payment) => ({ id: payment.id, date: dateKey(payment.paymentDate), member: payment.member.name, phone: payment.member.phone, amount: money(payment.amount), method: payment.paymentMethod, status: payment.status, reference: payment.receiptNumber })) };
 }
 
 export { rangeFromKey };

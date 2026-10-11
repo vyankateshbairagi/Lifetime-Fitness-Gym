@@ -9,9 +9,35 @@ export type DashboardStats = {
   pendingFees: string;
   revenueTrend: { month: string; amount: string }[];
   currentMonthRevenue: string;
-  expiringMemberships: { id: string; member: string; plan: string; expiresIn: string }[];
+  currentMonthExpenses: string;
+  netProfit: string;
+  todayRevenue: string;
+  expiringMemberships: {
+    id: string;
+    member: string;
+    phone?: string;
+    plan: string;
+    expiresIn: string;
+    daysRemaining: number;
+  }[];
   todaysAttendance: { id: string; member: string; time: string }[];
-  recentPayments: { id: string; member: string; plan: string; amount: string; method: string; date: string }[];
+  recentPayments: {
+    id: string;
+    member: string;
+    phone?: string;
+    plan: string;
+    amount: string;
+    method: string;
+    date: string;
+    receiptNumber?: string;
+  }[];
+  pendingMemberships: {
+    id: string;
+    member: string;
+    phone: string;
+    plan: string;
+    pendingAmount: string;
+  }[];
 };
 
 function dayStart(value: Date) {
@@ -29,18 +55,32 @@ function sum(values: Prisma.Decimal[]) {
 }
 
 /**
- * Returns the dashboard's four headline metrics using organization-scoped
+ * Returns the dashboard's headline metrics using organization-scoped
  * database queries. Financial calculations intentionally follow the same
  * append-only payment/refund rules used by the Payments and Reports modules.
  */
 export async function getDashboardStats(organizationId: string): Promise<DashboardStats> {
   const now = new Date();
   const today = dayStart(now);
+  const tomorrow = addDays(today, 1);
   const expiringEnd = addDays(today, 8);
-
   const chartStart = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth() - 5, 1));
+  const monthStart = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), 1));
+  const nextMonthStart = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth() + 1, 1));
 
-  const [totalMembers, activeMembers, expiringSoon, subscriptions, revenuePayments, refundPayments, expiringSubscriptions, attendanceRecords, recentPaymentRecords] = await Promise.all([
+  const [
+    totalMembers,
+    activeMembers,
+    expiringSoon,
+    subscriptions,
+    revenuePayments,
+    refundPayments,
+    expiringSubscriptions,
+    attendanceRecords,
+    recentPaymentRecords,
+    expensesAggregate,
+    todayAggregate,
+  ] = await Promise.all([
     db.member.count({ where: { organizationId } }),
     db.member.count({
       where: {
@@ -68,7 +108,11 @@ export async function getDashboardStats(organizationId: string): Promise<Dashboa
     db.subscription.findMany({
       where: { organizationId },
       select: {
+        id: true,
         amount: true,
+        status: true,
+        member: { select: { name: true, phone: true } },
+        plan: { select: { name: true } },
         payments: {
           select: {
             amount: true,
@@ -107,7 +151,7 @@ export async function getDashboardStats(organizationId: string): Promise<Dashboa
       select: {
         id: true,
         endDate: true,
-        member: { select: { name: true } },
+        member: { select: { name: true, phone: true } },
         plan: { select: { name: true } },
       },
     }),
@@ -132,13 +176,14 @@ export async function getDashboardStats(organizationId: string): Promise<Dashboa
         status: { notIn: ["FAILED", "VOIDED"] },
       },
       orderBy: { paymentDate: "desc" },
-      take: 5,
+      take: 6,
       select: {
         id: true,
         amount: true,
         paymentMethod: true,
         paymentDate: true,
-        member: { select: { name: true } },
+        receiptNumber: true,
+        member: { select: { name: true, phone: true } },
         subscription: {
           select: {
             plan: { select: { name: true } },
@@ -146,7 +191,32 @@ export async function getDashboardStats(organizationId: string): Promise<Dashboa
         },
       },
     }),
+    db.expense.aggregate({
+      where: {
+        organizationId,
+        expenseDate: { gte: monthStart, lt: nextMonthStart },
+        status: { not: "CANCELLED" },
+      },
+      _sum: { amount: true },
+    }),
+    db.payment.aggregate({
+      where: {
+        organizationId,
+        paymentDate: { gte: today, lt: tomorrow },
+        originalPaymentId: null,
+        status: { notIn: ["FAILED", "VOIDED"] },
+      },
+      _sum: { amount: true },
+    }),
   ]);
+
+  const pendingMembershipsList: {
+    id: string;
+    member: string;
+    phone: string;
+    plan: string;
+    pendingAmount: string;
+  }[] = [];
 
   const pendingFees = subscriptions.reduce((total, subscription) => {
     const paid = sum(
@@ -169,7 +239,18 @@ export async function getDashboardStats(organizationId: string): Promise<Dashboa
         .map((payment) => payment.amount)
     );
 
-    return total.plus(subscription.amount).minus(paid).plus(refunded);
+    const balance = subscription.amount.minus(paid).plus(refunded);
+    if (balance.greaterThan(0) && subscription.status === "ACTIVE") {
+      pendingMembershipsList.push({
+        id: subscription.id,
+        member: subscription.member.name,
+        phone: subscription.member.phone,
+        plan: subscription.plan.name,
+        pendingAmount: balance.toFixed(2),
+      });
+    }
+
+    return total.plus(balance);
   }, new Prisma.Decimal(0));
 
   const revenueTrend = Array.from({ length: 6 }, (_, index) => {
@@ -189,6 +270,10 @@ export async function getDashboardStats(organizationId: string): Promise<Dashboa
   });
 
   const currentMonthRevenue = revenueTrend[5]?.amount ?? "0.00";
+  const currentMonthExpenses = expensesAggregate._sum.amount?.toFixed(2) ?? "0.00";
+  const netProfitDecimal = new Prisma.Decimal(currentMonthRevenue).minus(new Prisma.Decimal(currentMonthExpenses));
+  const netProfit = netProfitDecimal.toFixed(2);
+  const todayRevenue = todayAggregate._sum.amount?.toFixed(2) ?? "0.00";
 
   const expiringMemberships = expiringSubscriptions.map((subscription) => {
     const endDay = dayStart(subscription.endDate);
@@ -196,8 +281,10 @@ export async function getDashboardStats(organizationId: string): Promise<Dashboa
     return {
       id: subscription.id,
       member: subscription.member.name,
+      phone: subscription.member.phone,
       plan: subscription.plan.name,
       expiresIn: `${daysRemaining} ${daysRemaining === 1 ? "day" : "days"}`,
+      daysRemaining,
     };
   });
 
@@ -212,10 +299,12 @@ export async function getDashboardStats(organizationId: string): Promise<Dashboa
   const recentPayments = recentPaymentRecords.map((payment) => ({
     id: payment.id,
     member: payment.member.name,
+    phone: payment.member.phone,
     plan: payment.subscription?.plan.name ?? "—",
     amount: payment.amount.toFixed(2),
     method: payment.paymentMethod.replaceAll("_", " "),
     date: payment.paymentDate.toLocaleDateString("en-IN", { day: "numeric", month: "short" }),
+    receiptNumber: payment.receiptNumber,
   }));
 
   return {
@@ -225,8 +314,12 @@ export async function getDashboardStats(organizationId: string): Promise<Dashboa
     pendingFees: pendingFees.greaterThan(0) ? pendingFees.toFixed(2) : "0.00",
     revenueTrend,
     currentMonthRevenue,
+    currentMonthExpenses,
+    netProfit,
+    todayRevenue,
     expiringMemberships,
     todaysAttendance,
     recentPayments,
+    pendingMemberships: pendingMembershipsList.slice(0, 5),
   };
 }

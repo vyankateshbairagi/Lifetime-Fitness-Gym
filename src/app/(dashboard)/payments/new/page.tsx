@@ -5,9 +5,50 @@ import { db } from "@/lib/db";
 import { getCurrentUser } from "@/lib/auth";
 import { can } from "@/lib/permissions";
 
-export default async function NewPaymentPage() {
+export default async function NewPaymentPage({
+  searchParams,
+}: {
+  searchParams?: Promise<{ subscriptionId?: string }>;
+}) {
   const user = await getCurrentUser();
   if (!can(user.role, "payments:create")) redirect("/payments");
-  const subscriptions = await db.subscription.findMany({ where: { organizationId: user.organizationId, status: { not: "CANCELLED" } }, orderBy: { createdAt: "desc" }, select: { id: true, memberId: true, amount: true, member: { select: { name: true, phone: true } }, plan: { select: { name: true } }, payments: { where: { status: "COMPLETED" }, select: { amount: true } } } });
-  return <div className="mx-auto max-w-2xl space-y-6"><div><p className="text-sm font-medium uppercase tracking-[0.16em] text-muted-foreground">Finance</p><h1 className="mt-1 text-3xl font-semibold tracking-tight">Record payment</h1><p className="mt-1 text-sm text-muted-foreground">Add an immutable payment record to a member subscription.</p></div><Card><CardHeader><CardTitle>Payment information</CardTitle></CardHeader><CardContent><PaymentForm subscriptions={subscriptions.map((subscription) => ({ ...subscription, amount: subscription.amount.toString(), payments: subscription.payments.map((payment) => payment.amount.toString()) }))} /></CardContent></Card></div>;
+  const params = await searchParams;
+  const initialSubscriptionId = params?.subscriptionId ?? "";
+  const subscriptions = await db.subscription.findMany({
+    where: { organizationId: user.organizationId, status: { not: "CANCELLED" } },
+    orderBy: { createdAt: "desc" },
+    select: {
+      id: true,
+      memberId: true,
+      amount: true,
+      member: { select: { name: true, phone: true } },
+      plan: { select: { name: true } },
+      payments: { where: { status: "COMPLETED" }, select: { amount: true } },
+    },
+  });
+
+  return (
+    <div className="mx-auto max-w-2xl space-y-6">
+      <div>
+        <p className="text-sm font-medium uppercase tracking-[0.16em] text-muted-foreground">Finance</p>
+        <h1 className="mt-1 text-3xl font-semibold tracking-tight">Record payment</h1>
+        <p className="mt-1 text-sm text-muted-foreground">Add an immutable payment record to a member subscription.</p>
+      </div>
+      <Card>
+        <CardHeader>
+          <CardTitle>Payment information</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <PaymentForm
+            initialSubscriptionId={initialSubscriptionId}
+            subscriptions={subscriptions.map((subscription) => ({
+              ...subscription,
+              amount: subscription.amount.toString(),
+              payments: subscription.payments.map((payment) => payment.amount.toString()),
+            }))}
+          />
+        </CardContent>
+      </Card>
+    </div>
+  );
 }

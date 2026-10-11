@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Eye, MoreHorizontal, Plus, Search, XCircle } from "lucide-react";
+import { Eye, MessageCircle, MoreHorizontal, Plus, Search, Wallet, XCircle } from "lucide-react";
 
 import { cancelSubscription, createSubscription } from "@/actions/subscriptions";
 import { Badge } from "@/components/ui/badge";
@@ -14,8 +14,21 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { subscriptionFormSchema, type SubscriptionFormValues } from "@/lib/validations/subscription";
+import { getFeeReminderUrl } from "@/lib/whatsapp";
 
-type Subscription = { id: string; memberId: string; planId: string; startDate: string; endDate: string; amount: string; status: "ACTIVE" | "EXPIRED" | "CANCELLED"; member: { name: string; phone: string }; plan: { name: string } };
+type Subscription = {
+  id: string;
+  memberId: string;
+  planId: string;
+  startDate: string;
+  endDate: string;
+  amount: string;
+  status: "ACTIVE" | "EXPIRED" | "CANCELLED";
+  member: { name: string; phone: string };
+  plan: { name: string };
+  paid?: number;
+  outstanding?: number;
+};
 type Member = { id: string; name: string; phone: string };
 type Plan = { id: string; name: string; price: string; durationInDays: number };
 
@@ -50,8 +63,209 @@ export function SubscriptionWorkspace({ subscriptions, members, plans, canCreate
   const filtered = subscriptions.filter((subscription) => { const currentStatus = displayStatus(subscription); const text = `${subscription.member.name} ${subscription.member.phone} ${subscription.plan.name}`.toLowerCase(); return text.includes(query.toLowerCase()) && (status === "ALL" || currentStatus === status); });
   const done = (message: string) => { setFormOpen(false); setNotice(message); router.refresh(); };
   const cancel = () => { if (!toCancel) return; startTransition(async () => { const result = await cancelSubscription(toCancel.id); setNotice(result.message); if (result.success) { setToCancel(null); router.refresh(); } }); };
-  return <><div className="flex flex-col gap-3 border-b border-border/80 bg-muted/20 p-4 sm:flex-row sm:items-center"><div className="relative min-w-0 flex-1"><Search className="absolute left-3 top-3 size-4 text-muted-foreground" /><Input aria-label="Search subscriptions" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search member, phone, or plan" className="h-10 pl-9" /></div><select aria-label="Filter subscriptions by status" value={status} onChange={(event) => setStatus(event.target.value)} className="border-input bg-background h-10 rounded-lg border px-3 text-sm shadow-sm"><option value="ALL">All statuses</option><option value="ACTIVE">Active</option><option value="UPCOMING">Upcoming</option><option value="EXPIRED">Expired</option><option value="CANCELLED">Cancelled</option></select>{canCreate && <Button onClick={() => setFormOpen(true)}><Plus className="size-4" />New subscription</Button>}</div>{notice && <p className="border-b border-border/80 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">{notice}</p>}{filtered.length === 0 ? <div className="flex flex-col items-center gap-2 px-6 py-16 text-center"><p className="font-medium">{subscriptions.length ? "No subscriptions match your search" : "No subscriptions yet"}</p><p className="text-sm text-muted-foreground">{subscriptions.length ? "Try a different search or status filter." : "Create a subscription to start tracking member history."}</p>{canCreate && !subscriptions.length && <Button onClick={() => setFormOpen(true)}><Plus className="size-4" />New subscription</Button>}</div> : <div className="overflow-x-auto"><table className="w-full min-w-[760px] text-sm"><thead><tr className="border-b text-left text-muted-foreground"><th className="h-10 px-4 font-medium">Member</th><th className="h-10 px-4 font-medium">Plan</th><th className="h-10 px-4 font-medium">Start</th><th className="h-10 px-4 font-medium">End</th><th className="h-10 px-4 font-medium">Amount</th><th className="h-10 px-4 font-medium">Status</th><th className="h-10 px-4 text-right font-medium">Actions</th></tr></thead><tbody>{filtered.map((subscription) => { const currentStatus = displayStatus(subscription); return <tr key={subscription.id} className="border-b transition-colors hover:bg-muted/50"><td className="max-w-56 p-4"><Link href={`/subscriptions/${subscription.id}`} className="truncate font-medium text-foreground hover:underline">{subscription.member.name}</Link><p className="text-xs text-muted-foreground">{subscription.member.phone}</p></td><td className="p-4">{subscription.plan.name}</td><td className="whitespace-nowrap p-4">{formatDate(subscription.startDate)}</td><td className="whitespace-nowrap p-4">{formatDate(subscription.endDate)}</td><td className="whitespace-nowrap p-4 font-medium">{priceLabel(subscription.amount)}</td><td className="p-4"><Badge variant={statusVariant(currentStatus)}>{currentStatus}</Badge></td><td className="p-4 text-right"><DropdownMenu><DropdownMenuTrigger asChild><Button variant="ghost" size="icon" aria-label={`Actions for ${subscription.member.name}`}><MoreHorizontal className="size-4" /></Button></DropdownMenuTrigger><DropdownMenuContent align="end"><DropdownMenuItem asChild><Link href={`/subscriptions/${subscription.id}`}><Eye className="size-4" />View</Link></DropdownMenuItem>{canCancel && currentStatus === "ACTIVE" && <DropdownMenuItem variant="destructive" disabled={isPending} onClick={() => setToCancel(subscription)}><XCircle className="size-4" />Cancel subscription</DropdownMenuItem>}</DropdownMenuContent></DropdownMenu></td></tr>; })}</tbody></table></div>}
-    <Dialog open={formOpen} onOpenChange={setFormOpen}><DialogContent><DialogHeader><DialogTitle>New subscription</DialogTitle><DialogDescription>Select a member and active plan. Price and duration are read from the database when saved.</DialogDescription></DialogHeader><div className="mt-5"><SubscriptionForm members={members} plans={plans} onDone={done} /></div></DialogContent></Dialog>
-    <Dialog open={toCancel !== null} onOpenChange={(open) => !open && !isPending && setToCancel(null)}><DialogContent><DialogHeader><DialogTitle>Cancel subscription?</DialogTitle><DialogDescription>This subscription will be marked as cancelled. Historical subscription information will be preserved.</DialogDescription></DialogHeader><div className="mt-6 flex justify-end gap-3"><Button variant="outline" disabled={isPending} onClick={() => setToCancel(null)}>Cancel</Button><Button variant="destructive" disabled={isPending} onClick={cancel}>{isPending ? "Cancelling..." : "Confirm Cancellation"}</Button></div></DialogContent></Dialog>
-  </>;
+  return (
+    <>
+      <div className="flex flex-col gap-3 border-b border-border/80 bg-muted/20 p-4 sm:flex-row sm:items-center">
+        <div className="relative min-w-0 flex-1">
+          <Search className="absolute left-3 top-3 size-4 text-muted-foreground" />
+          <Input
+            aria-label="Search subscriptions"
+            value={query}
+            onChange={(event) => setQuery(event.target.value)}
+            placeholder="Search member, phone, or plan"
+            className="h-10 pl-9"
+          />
+        </div>
+        <select
+          aria-label="Filter subscriptions by status"
+          value={status}
+          onChange={(event) => setStatus(event.target.value)}
+          className="border-input bg-background h-10 rounded-lg border px-3 text-sm shadow-sm"
+        >
+          <option value="ALL">All statuses</option>
+          <option value="ACTIVE">Active</option>
+          <option value="UPCOMING">Upcoming</option>
+          <option value="EXPIRED">Expired</option>
+          <option value="CANCELLED">Cancelled</option>
+        </select>
+        {canCreate && (
+          <Button onClick={() => setFormOpen(true)}>
+            <Plus className="size-4" />
+            New subscription
+          </Button>
+        )}
+      </div>
+
+      {notice && (
+        <p className="border-b border-emerald-500/30 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-500 font-medium">
+          {notice}
+        </p>
+      )}
+
+      {filtered.length === 0 ? (
+        <div className="flex flex-col items-center gap-2 px-6 py-16 text-center">
+          <p className="font-medium">
+            {subscriptions.length ? "No subscriptions match your search" : "No subscriptions yet"}
+          </p>
+          <p className="text-sm text-muted-foreground">
+            {subscriptions.length
+              ? "Try a different search or status filter."
+              : "Create a subscription to start tracking member history."}
+          </p>
+          {canCreate && !subscriptions.length && (
+            <Button onClick={() => setFormOpen(true)}>
+              <Plus className="size-4" />
+              New subscription
+            </Button>
+          )}
+        </div>
+      ) : (
+        <div className="overflow-x-auto">
+          <table className="w-full min-w-[850px] text-sm">
+            <thead>
+              <tr className="border-b text-left text-muted-foreground">
+                <th className="h-10 px-4 font-medium">Member</th>
+                <th className="h-10 px-4 font-medium">Plan</th>
+                <th className="h-10 px-4 font-medium">Start</th>
+                <th className="h-10 px-4 font-medium">End</th>
+                <th className="h-10 px-4 font-medium">Fee</th>
+                <th className="h-10 px-4 font-medium">Payment</th>
+                <th className="h-10 px-4 font-medium">Status</th>
+                <th className="h-10 px-4 text-right font-medium">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filtered.map((subscription) => {
+                const currentStatus = displayStatus(subscription);
+                return (
+                  <tr key={subscription.id} className="border-b transition-colors hover:bg-muted/50">
+                    <td className="max-w-56 p-4">
+                      <Link
+                        href={`/subscriptions/${subscription.id}`}
+                        className="truncate font-medium text-foreground hover:underline"
+                      >
+                        {subscription.member.name}
+                      </Link>
+                      <p className="text-xs text-muted-foreground">{subscription.member.phone}</p>
+                    </td>
+                    <td className="p-4">{subscription.plan.name}</td>
+                    <td className="whitespace-nowrap p-4">{formatDate(subscription.startDate)}</td>
+                    <td className="whitespace-nowrap p-4">{formatDate(subscription.endDate)}</td>
+                    <td className="whitespace-nowrap p-4 font-medium">{priceLabel(subscription.amount)}</td>
+                    <td className="whitespace-nowrap p-4">
+                      {subscription.outstanding !== undefined ? (
+                        subscription.outstanding > 0 ? (
+                          <Badge variant="warning" className="text-[10px] font-bold">
+                            Due: {priceLabel(subscription.outstanding.toString())}
+                          </Badge>
+                        ) : (
+                          <Badge variant="success" className="text-[10px] font-bold">
+                            Paid in Full
+                          </Badge>
+                        )
+                      ) : (
+                        "-"
+                      )}
+                    </td>
+                    <td className="p-4">
+                      <Badge variant={statusVariant(currentStatus)}>{currentStatus}</Badge>
+                    </td>
+                    <td className="p-4 text-right">
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            aria-label={`Actions for ${subscription.member.name}`}
+                          >
+                            <MoreHorizontal className="size-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem asChild>
+                            <Link href={`/subscriptions/${subscription.id}`}>
+                              <Eye className="size-4" />
+                              View details
+                            </Link>
+                          </DropdownMenuItem>
+                          {subscription.outstanding !== undefined && subscription.outstanding > 0 && (
+                            <>
+                              <DropdownMenuItem asChild>
+                                <Link href={`/payments/new?subscriptionId=${subscription.id}`}>
+                                  <Wallet className="size-4" />
+                                  Record payment
+                                </Link>
+                              </DropdownMenuItem>
+                              <DropdownMenuItem asChild>
+                                <a
+                                  href={getFeeReminderUrl({
+                                    phone: subscription.member.phone,
+                                    memberName: subscription.member.name,
+                                    planName: subscription.plan.name,
+                                    pendingAmount: subscription.outstanding,
+                                  })}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-emerald-500 font-medium"
+                                >
+                                  <MessageCircle className="size-4 text-emerald-500" />
+                                  WhatsApp reminder
+                                </a>
+                              </DropdownMenuItem>
+                            </>
+                          )}
+                          {canCancel && currentStatus === "ACTIVE" && (
+                            <DropdownMenuItem
+                              variant="destructive"
+                              disabled={isPending}
+                              onClick={() => setToCancel(subscription)}
+                            >
+                              <XCircle className="size-4" />
+                              Cancel subscription
+                            </DropdownMenuItem>
+                          )}
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      )}
+      <Dialog open={formOpen} onOpenChange={setFormOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>New subscription</DialogTitle>
+            <DialogDescription>
+              Select a member and active plan. Price and duration are read from the database when saved.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="mt-5">
+            <SubscriptionForm members={members} plans={plans} onDone={done} />
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={toCancel !== null} onOpenChange={(open) => !open && !isPending && setToCancel(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Cancel subscription?</DialogTitle>
+            <DialogDescription>
+              This subscription will be marked as cancelled. Historical subscription information will be preserved.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="mt-6 flex justify-end gap-3">
+            <Button variant="outline" disabled={isPending} onClick={() => setToCancel(null)}>
+              Cancel
+            </Button>
+            <Button variant="destructive" disabled={isPending} onClick={cancel}>
+              {isPending ? "Cancelling..." : "Confirm Cancellation"}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+    </>
+  );
 }

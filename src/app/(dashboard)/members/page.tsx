@@ -5,14 +5,39 @@ import { getCurrentUser } from "@/lib/auth";
 import { can } from "@/lib/permissions";
 import { redirect } from "next/navigation";
 
-export default async function MembersPage() {
+export default async function MembersPage({
+  searchParams,
+}: {
+  searchParams?: Promise<Record<string, string | string[] | undefined>>;
+}) {
   const user = await getCurrentUser();
   if (!can(user.role, "members:view")) redirect("/dashboard");
-  const [members, plans] = await Promise.all([db.member.findMany({
-    where: { organizationId: user.organizationId },
-    orderBy: { createdAt: "desc" },
-    select: { id: true, name: true, phone: true, email: true, status: true, joiningDate: true, gender: true, dateOfBirth: true, address: true, emergencyContact: true },
-  }), db.membershipPlan.findMany({ where: { organizationId: user.organizationId, isActive: true }, orderBy: { name: "asc" }, select: { id: true, name: true, price: true, durationInDays: true } })]);
+  const params = searchParams ? await searchParams : {};
+  const initialSearch = typeof params.search === "string" ? params.search : "";
+
+  const [members, plans] = await Promise.all([
+    db.member.findMany({
+      where: { organizationId: user.organizationId },
+      orderBy: { createdAt: "desc" },
+      select: {
+        id: true,
+        name: true,
+        phone: true,
+        email: true,
+        status: true,
+        joiningDate: true,
+        gender: true,
+        dateOfBirth: true,
+        address: true,
+        emergencyContact: true,
+      },
+    }),
+    db.membershipPlan.findMany({
+      where: { organizationId: user.organizationId, isActive: true },
+      orderBy: { name: "asc" },
+      select: { id: true, name: true, price: true, durationInDays: true },
+    }),
+  ]);
 
   return (
     <div className="space-y-6">
@@ -26,11 +51,16 @@ export default async function MembersPage() {
       <Card>
         <CardContent className="p-0">
           <MemberWorkspace
-            members={members.map((member) => ({ ...member, joiningDate: member.joiningDate.toISOString(), dateOfBirth: member.dateOfBirth?.toISOString() ?? null }))}
+            members={members.map((member) => ({
+              ...member,
+              joiningDate: member.joiningDate.toISOString(),
+              dateOfBirth: member.dateOfBirth?.toISOString() ?? null,
+            }))}
             plans={plans.map((plan) => ({ ...plan, price: plan.price.toString() }))}
             canEdit={can(user.role, "members:update")}
             canDeactivate={can(user.role, "members:deactivate")}
             canCreate={can(user.role, "members:create")}
+            initialSearch={initialSearch}
           />
         </CardContent>
       </Card>

@@ -12,11 +12,36 @@ import { paymentSchema, type PaymentFormValues } from "@/lib/validations/payment
 type Subscription = { id: string; memberId: string; amount: string; member: { name: string; phone: string }; plan: { name: string }; payments: string[] };
 function money(value: string) { return `₹${Number(value).toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`; }
 
-export function PaymentForm({ subscriptions }: { subscriptions: Subscription[] }) {
+export function PaymentForm({
+  subscriptions,
+  initialSubscriptionId = "",
+}: {
+  subscriptions: Subscription[];
+  initialSubscriptionId?: string;
+}) {
   const router = useRouter();
   const [error, setError] = useState("");
   const [isPending, startTransition] = useTransition();
-  const { control, register, setValue, handleSubmit, setError: setFieldError, formState: { errors } } = useForm<PaymentFormValues>({ resolver: zodResolver(paymentSchema), defaultValues: { memberId: "", subscriptionId: "", amount: "", paymentMethod: "CASH", paymentDate: new Date().toISOString().slice(0, 10), referenceNumber: "", notes: "" } });
+  const initialSelected = subscriptions.find((sub) => sub.id === initialSubscriptionId);
+  const {
+    control,
+    register,
+    setValue,
+    handleSubmit,
+    setError: setFieldError,
+    formState: { errors },
+  } = useForm<PaymentFormValues>({
+    resolver: zodResolver(paymentSchema),
+    defaultValues: {
+      memberId: initialSelected?.memberId ?? "",
+      subscriptionId: initialSubscriptionId,
+      amount: "",
+      paymentMethod: "CASH",
+      paymentDate: new Date().toISOString().slice(0, 10),
+      referenceNumber: "",
+      notes: "",
+    },
+  });
   const subscriptionId = useWatch({ control, name: "subscriptionId" });
   const selected = subscriptions.find((subscription) => subscription.id === subscriptionId);
   const paid = selected?.payments.reduce((sum, value) => sum + Number(value), 0) ?? 0;

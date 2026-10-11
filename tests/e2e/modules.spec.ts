@@ -1,4 +1,4 @@
-import { test, expect, ownerState, staffState } from "./fixtures";
+import { test, expect, ownerState, staffState, e2eConfigured } from "./fixtures";
 
 test.describe("application modules", () => {
   test.use({ storageState: ownerState });
@@ -85,7 +85,8 @@ test.describe("application modules", () => {
     await expect(page.getByRole("heading", { name: "Settings" })).toBeVisible();
   });
 
-  test("staff cannot see owner-only mutation controls", async ({ browser }) => {
+  test("staff cannot see owner-only mutation controls", async ({ browser }, testInfo) => {
+    testInfo.skip(!e2eConfigured, "E2E environment is not configured. See .env.test.example.");
     const page = await browser.newPage({ storageState: staffState });
     await page.goto("/plans");
     await expect(page.getByRole("heading", { name: "Membership Plans" })).toBeVisible();
