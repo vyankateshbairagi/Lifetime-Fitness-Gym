@@ -96,7 +96,7 @@ export function LocationContact() {
               </a>
 
               <a
-                href="https://www.google.com/maps/place/LifeTime+Fitness+Gym/@18.5043287,73.8590356,45m/data=!3m1!1e3!4m6!3m5!1s0x3bc2c19047ab4c7d:0xf099cc00358960df!8m2!3d18.5043852!4d73.8592322!16s%2Fg%2F11v158w8py?entry=ttu&g_ep=EgoyMDI2MTAwNy4wIKXMDSoASAFQAw%3D%3D"
+                href="https://maps.app.goo.gl/LJAx4xiLBMJK3TFS8"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center justify-center gap-2 rounded-xl bg-red-600/20 border border-red-500/40 px-4 py-3 text-xs font-bold uppercase tracking-wider text-red-300 transition hover:bg-red-600 hover:text-white"

@@ -45,6 +45,41 @@ const nextConfig: NextConfig = {
         destination: "/#services",
         permanent: true,
       },
+      {
+        source: "/about",
+        destination: "/#about",
+        permanent: true,
+      },
+      {
+        source: "/services",
+        destination: "/#services",
+        permanent: true,
+      },
+      {
+        source: "/contact",
+        destination: "/#contact",
+        permanent: true,
+      },
+      {
+        source: "/gallery",
+        destination: "/#gallery",
+        permanent: true,
+      },
+      {
+        source: "/trainers",
+        destination: "/#trainers",
+        permanent: true,
+      },
+      {
+        source: "/membership",
+        destination: "/#plans",
+        permanent: true,
+      },
+      {
+        source: "/join",
+        destination: "/#free-trial",
+        permanent: true,
+      },
     ];
   },
 };

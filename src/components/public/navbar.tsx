@@ -81,7 +81,7 @@ export function Navbar() {
         <div className="flex items-center gap-2 sm:gap-3 lg:hidden">
           <Link
             href="/#free-trial"
-            className="hidden min-[420px]:inline-flex items-center gap-1.5 whitespace-nowrap rounded-full bg-gradient-to-r from-red-600 to-red-500 px-3 py-1.5 text-[11px] font-black uppercase tracking-wider text-white shadow-sm shadow-red-600/30 hover:from-red-500 hover:to-red-600 transition"
+            className="inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full bg-gradient-to-r from-red-600 to-red-500 px-2.5 py-1 text-[10px] sm:text-xs font-black uppercase tracking-wider text-white shadow-sm shadow-red-600/30 hover:from-red-500 hover:to-red-600 transition"
             onClick={() => setMobileOpen(false)}
           >
             <Dumbbell className="size-3" />

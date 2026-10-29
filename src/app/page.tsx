@@ -76,8 +76,15 @@ export default async function HomePage() {
     "@context": "https://schema.org",
     "@type": "HealthClub",
     name: "LifeTime Fitness Gym",
+    logo: "https://lifetimefitnessgym.com/lifetime-fitness-gym-logo.png",
     image: "https://lifetimefitnessgym.com/photos/img_0600.webp",
     telephone: "+918446648527",
+    description:
+      "LifeTime Fitness Gym in Guruwar Peth, Pune. Build strength, improve fitness, and become your best with quality equipment, training support, and flexible membership options.",
+    priceRange: "₹₹",
+    currenciesAccepted: "INR",
+    paymentAccepted: "Cash, UPI, Debit Card, Credit Card",
+    hasMap: "https://www.google.com/maps/place/LifeTime+Fitness+Gym/@18.5043852,73.8592322,17z",
     address: {
       "@type": "PostalAddress",
       streetAddress: "732, Chhatrapati Shivaji Maharaj Rd, near Rashtrabhushan Chowk, Guruwar Peth",
@@ -88,10 +95,11 @@ export default async function HomePage() {
     },
     geo: {
       "@type": "GeoCoordinates",
-      latitude: "18.5085",
-      longitude: "73.8567",
+      latitude: "18.5043852",
+      longitude: "73.8592322",
     },
     url: "https://lifetimefitnessgym.com",
+    sameAs: ["https://wa.me/918446648527"],
     openingHoursSpecification: [
       {
         "@type": "OpeningHoursSpecification",

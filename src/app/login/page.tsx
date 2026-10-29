@@ -1,8 +1,18 @@
+import type { Metadata } from "next";
 import { LogIn } from "lucide-react";
 import Image from "next/image";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { LoginForm } from "@/components/shared/login-form";
+
+export const metadata: Metadata = {
+  title: "Staff Login",
+  description: "Sign in to LifeTime Fitness Gym Management Dashboard.",
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
 
 export default function LoginPage() {
   return (
