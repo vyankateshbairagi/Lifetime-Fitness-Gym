@@ -112,9 +112,11 @@ export function Hero() {
                 <span className="text-[10px] font-black uppercase tracking-wider text-white">Guruwar Peth, Pune</span>
               </div>
 
-              <div className="absolute -top-2 -right-2 sm:top-1 sm:right-1 flex items-center gap-1.5 rounded-full border border-white/20 bg-black/90 px-3 py-1 backdrop-blur-md shadow-xl shadow-black/80">
-                <span className="size-2 rounded-full bg-red-500 animate-ping" />
-                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-200">Open 6 AM – 10 PM</span>
+              <div className="absolute -top-2 -right-2 sm:top-1 sm:right-1 flex items-center gap-1.5 rounded-full border border-white/20 bg-black/90 px-3 py-1 backdrop-blur-md shadow-xl shadow-black/80 whitespace-nowrap">
+                <span className="size-2 rounded-full bg-red-500 animate-ping shrink-0" />
+                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-200">
+                  6 AM – 10 AM | 4 PM – 10 PM
+                </span>
               </div>
             </div>
           </div>

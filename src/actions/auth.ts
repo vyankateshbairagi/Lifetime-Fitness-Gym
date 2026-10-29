@@ -6,6 +6,7 @@ import bcrypt from "bcryptjs";
 import { db } from "@/lib/db";
 import { createSession, deleteSession } from "@/lib/session";
 import { loginSchema, type LoginFormState } from "@/lib/validations/auth";
+import { checkRateLimit, resetRateLimit } from "@/lib/rate-limit";
 
 export async function loginAction(
   _prevState: LoginFormState,
@@ -26,6 +27,15 @@ export async function loginAction(
   }
 
   const { email, password } = validated.data;
+  const normalizedEmail = email.toLowerCase().trim();
+
+  // Rate limiting to mitigate brute-force and credential-stuffing attacks
+  const rateLimit = checkRateLimit(`login:${normalizedEmail}`, 5, 15 * 60 * 1000);
+  if (!rateLimit.success) {
+    return {
+      error: `Too many login attempts. Please try again in ${Math.ceil(rateLimit.resetInSeconds / 60)} minutes.`,
+    };
+  }
 
   // NOTE: email is unique per-organization, not globally (see schema.prisma),
   // to support multiple gyms in the future. With only one gym on Day 2,
@@ -34,7 +44,7 @@ export async function loginAction(
   // login belongs to (e.g. a per-org login URL/slug, or subdomain-based
   // tenant resolution) — deliberately deferred rather than guessed at here.
   const user = await db.user.findFirst({
-    where: { email: email.toLowerCase(), isActive: true },
+    where: { email: normalizedEmail, isActive: true },
   });
 
   if (!user) {
@@ -47,6 +57,8 @@ export async function loginAction(
   if (!passwordMatches) {
     return { error: "Invalid email or password." };
   }
+
+  resetRateLimit(`login:${normalizedEmail}`);
 
   await createSession({
     userId: user.id,

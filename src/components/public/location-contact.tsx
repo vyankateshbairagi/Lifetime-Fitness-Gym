@@ -120,20 +120,24 @@ export function LocationContact() {
             <div className="relative flex-1 w-full min-h-[340px]">
               <iframe
                 title="LifeTime Fitness Gym Pune Location Map"
-                src="https://maps.google.com/maps?q=732+Chhatrapati+Shivaji+Maharaj+Rd+near+Rashtrabhushan+Chowk+Guruwar+Peth+Pune+Maharashtra+411042&t=&z=16&ie=UTF8&iwloc=&output=embed"
+                src="https://maps.google.com/maps?q=LifeTime+Fitness+Gym,+Guruwar+Peth,+Pune&t=&z=16&ie=UTF8&iwloc=&output=embed"
                 className="absolute inset-0 h-full w-full border-0"
+                style={{ filter: "invert(90%) hue-rotate(180deg) contrast(115%) brightness(95%)" }}
                 loading="lazy"
                 allowFullScreen
                 referrerPolicy="no-referrer-when-downgrade"
               />
             </div>
-            <div className="p-4 bg-[#120a0b] border-t border-white/10 flex items-center justify-between text-xs">
-              <span className="text-slate-400">Guruwar Peth, Pune</span>
+            <div className="p-4 bg-[#120a0b] border-t border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
+              <div className="flex flex-col">
+                <span className="font-bold text-white">732, Chhatrapati Shivaji Maharaj Rd</span>
+                <span className="text-slate-400">near rashtrabhushan chowk, Guruwar Peth</span>
+              </div>
               <a
-                href="https://maps.app.goo.gl/LJAx4xiLBMJK3TFS8"
+                href="https://www.google.com/maps/place/LifeTime+Fitness+Gym/@18.5043852,73.8592322,17z"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 font-bold uppercase tracking-wider text-red-400 hover:text-red-300"
+                className="inline-flex items-center gap-1.5 font-bold uppercase tracking-wider text-red-400 hover:text-red-300 shrink-0"
               >
                 <span>Open in Google Maps App</span>
                 <ArrowRight className="size-3.5" />
