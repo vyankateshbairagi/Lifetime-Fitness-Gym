@@ -3,11 +3,11 @@ import { Lock, Phone, Sparkles } from "lucide-react";
 
 export function AnnouncementBar() {
   return (
-    <div className="border-b border-red-950/60 bg-[#0d0708] text-xs text-slate-300">
+    <div className="hidden sm:block border-b border-red-950/60 bg-[#0d0708] text-xs text-slate-300">
       <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-x-4 gap-y-2 px-4 py-2 sm:px-8 lg:px-12">
         {/* Left: Platform Attribution */}
-        <div className="flex items-center gap-2">
-          <Sparkles className="size-3.5 text-red-500 shrink-0" aria-hidden="true" />
+        <div className="flex items-center gap-1.5 sm:gap-2">
+          <Sparkles className="size-3 text-red-500 shrink-0" aria-hidden="true" />
           <a
             href="https://chalobuild.in/"
             target="_blank"
@@ -24,10 +24,10 @@ export function AnnouncementBar() {
         </div>
 
         {/* Right: Phone & Staff Login */}
-        <div className="flex items-center gap-3 sm:gap-5">
+        <div className="flex items-center gap-2.5 sm:gap-5">
           <a
             href="tel:+918446648527"
-            className="inline-flex items-center gap-1.5 font-medium text-slate-300 transition hover:text-red-400"
+            className="inline-flex items-center gap-1 font-medium text-slate-300 transition hover:text-red-400"
             aria-label="Call gym at 8446648527"
           >
             <Phone className="size-3 text-red-500 shrink-0" aria-hidden="true" />
@@ -38,9 +38,9 @@ export function AnnouncementBar() {
 
           <Link
             href="/login"
-            className="inline-flex items-center gap-1.5 rounded-full border border-red-500/40 bg-red-950/40 px-3 py-0.5 text-[11px] font-bold uppercase tracking-wider text-red-300 transition hover:border-red-400 hover:bg-red-900/60 hover:text-white focus:outline-none focus:ring-2 focus:ring-red-500"
+            className="inline-flex items-center gap-1 rounded-full border border-red-500/40 bg-red-950/40 px-2.5 py-0.5 text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-red-300 transition hover:border-red-400 hover:bg-red-900/60 hover:text-white focus:outline-none focus:ring-2 focus:ring-red-500"
           >
-            <Lock className="size-3 shrink-0" aria-hidden="true" />
+            <Lock className="size-2.5 sm:size-3 shrink-0" aria-hidden="true" />
             <span>Staff Login</span>
           </Link>
         </div>

@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Dumbbell, Menu, X } from "lucide-react";
+import { Dumbbell, Menu, Phone, X } from "lucide-react";
 
 const NAV_LINKS = [
   { label: "Home", href: "/#" },
@@ -25,15 +25,15 @@ export function Navbar() {
   }, []);
 
   return (
-    <nav className="sticky top-0 z-40 border-b border-white/10 bg-[#090909]/95 backdrop-blur-md">
-      <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-4 sm:px-8 lg:px-12">
+    <nav className="sticky top-0 z-40 border-b border-white/[0.08] bg-[#090708]/90 backdrop-blur-xl shadow-lg shadow-black/40">
+      <div className="mx-auto flex h-16 sm:h-20 max-w-7xl items-center justify-between px-3.5 sm:px-8 lg:px-12">
         {/* Brand Identity */}
         <Link
           href="/"
-          className="group flex items-center gap-3.5 focus:outline-none focus:ring-2 focus:ring-red-500 rounded-lg p-1"
+          className="group flex min-w-0 items-center gap-2.5 sm:gap-3.5 rounded-lg p-1 focus:outline-none focus:ring-2 focus:ring-red-500"
           onClick={() => setMobileOpen(false)}
         >
-          <div className="relative size-12 shrink-0 overflow-hidden rounded-xl bg-black border border-white/10 p-1 transition group-hover:border-red-500/50">
+          <div className="relative size-9 min-[360px]:size-10 sm:size-12 shrink-0 overflow-hidden rounded-xl bg-black border border-white/10 p-0.5 sm:p-1 shadow-sm transition group-hover:border-red-500/50">
             <Image
               src="/lifetime-fitness-gym-logo.webp"
               alt="LifeTime Fitness Gym Logo"
@@ -43,11 +43,11 @@ export function Navbar() {
               priority
             />
           </div>
-          <div className="flex flex-col">
-            <span className="text-lg sm:text-xl font-black uppercase tracking-tight text-white transition group-hover:text-red-400">
+          <div className="flex flex-col min-w-0">
+            <span className="text-sm min-[360px]:text-base sm:text-xl font-black uppercase tracking-tight text-white transition group-hover:text-red-400 truncate">
               LifeTime Fitness
             </span>
-            <span className="text-[10px] sm:text-xs font-bold uppercase tracking-[0.25em] text-red-500">
+            <span className="text-[9px] min-[360px]:text-[10px] sm:text-xs font-bold uppercase tracking-[0.22em] text-red-500 leading-none mt-0.5">
               GYM | PUNE
             </span>
           </div>
@@ -77,50 +77,70 @@ export function Navbar() {
           </Link>
         </div>
 
-        {/* Mobile Menu Button */}
-        <div className="flex items-center gap-3 lg:hidden">
+        {/* Mobile Actions & Menu Toggle */}
+        <div className="flex items-center gap-2 sm:gap-3 lg:hidden">
           <Link
             href="/#free-trial"
-            className="rounded-full bg-red-600 px-3.5 py-1.5 text-[11px] font-bold uppercase tracking-wider text-white hover:bg-red-500"
+            className="hidden min-[420px]:inline-flex items-center gap-1.5 whitespace-nowrap rounded-full bg-gradient-to-r from-red-600 to-red-500 px-3 py-1.5 text-[11px] font-black uppercase tracking-wider text-white shadow-sm shadow-red-600/30 hover:from-red-500 hover:to-red-600 transition"
             onClick={() => setMobileOpen(false)}
           >
-            Free Pass
+            <Dumbbell className="size-3" />
+            <span>Free Pass</span>
           </Link>
           <button
             type="button"
-            className="inline-flex size-10 items-center justify-center rounded-lg border border-white/10 bg-white/5 text-white transition hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-red-500"
+            className="inline-flex size-9 sm:size-10 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-white transition hover:bg-white/10 hover:border-red-500/40 active:scale-95 focus:outline-none focus:ring-2 focus:ring-red-500"
             aria-label={mobileOpen ? "Close navigation menu" : "Open navigation menu"}
             aria-expanded={mobileOpen}
             onClick={() => setMobileOpen(!mobileOpen)}
           >
-            {mobileOpen ? <X className="size-5" /> : <Menu className="size-5" />}
+            {mobileOpen ? <X className="size-5 text-red-400" /> : <Menu className="size-5" />}
           </button>
         </div>
       </div>
 
       {/* Mobile Drawer Menu */}
       {mobileOpen && (
-        <div className="border-t border-white/10 bg-[#0d0708] px-6 py-6 lg:hidden animate-in fade-in slide-in-from-top-2 duration-200">
-          <div className="mx-auto flex max-w-7xl flex-col gap-2">
+        <div className="border-t border-white/10 bg-[#0c0607]/98 backdrop-blur-2xl px-4 py-5 lg:hidden animate-in fade-in slide-in-from-top-2 duration-200 shadow-2xl">
+          <div className="mx-auto flex max-w-7xl flex-col gap-1.5">
             {NAV_LINKS.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
                 onClick={() => setMobileOpen(false)}
-                className="rounded-lg px-4 py-3 text-sm font-bold uppercase tracking-wider text-slate-200 transition hover:bg-white/5 hover:text-red-400"
+                className="flex items-center justify-between rounded-xl px-4 py-2.5 text-sm font-bold uppercase tracking-wider text-slate-200 transition hover:bg-white/5 hover:text-red-400"
               >
-                {item.label}
+                <span>{item.label}</span>
+                <span className="text-xs text-red-500/60 font-mono">→</span>
               </Link>
             ))}
-            <div className="pt-3 border-t border-white/10 mt-2">
+            <div className="pt-4 border-t border-white/10 mt-2 space-y-3">
               <Link
                 href="/#free-trial"
                 onClick={() => setMobileOpen(false)}
-                className="flex w-full items-center justify-center gap-2 rounded-xl bg-red-600 py-3 text-center text-sm font-extrabold uppercase tracking-wider text-white shadow-md shadow-red-600/30 hover:bg-red-500"
+                className="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-red-600 to-red-500 py-3 text-center text-sm font-black uppercase tracking-wider text-white shadow-lg shadow-red-600/30 hover:from-red-500 hover:to-red-600 transition"
               >
                 <Dumbbell className="size-4" />
                 <span>Book Free Trial Pass</span>
               </Link>
+
+              <div className="flex items-center justify-between pt-1 px-1 text-xs text-slate-400">
+                <a
+                  href="tel:+918446648527"
+                  className="inline-flex items-center gap-1.5 hover:text-white transition font-medium"
+                >
+                  <Phone className="size-3.5 text-red-500" />
+                  <span>8446648527</span>
+                </a>
+                <Link
+                  href="/login"
+                  onClick={() => setMobileOpen(false)}
+                  className="inline-flex items-center gap-1 text-red-400 hover:text-red-300 font-semibold transition"
+                >
+                  <span>Staff Login</span>
+                  <span>→</span>
+                </Link>
+              </div>
             </div>
           </div>
         </div>
