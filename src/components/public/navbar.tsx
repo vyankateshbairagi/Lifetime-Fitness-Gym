@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Dumbbell, Menu, Phone, X } from "lucide-react";
+import { InstagramIcon, YoutubeIcon } from "./social-icons";
 
 const NAV_LINKS = [
   { label: "Home", href: "/#" },
@@ -140,6 +141,28 @@ export function Navbar() {
                   <span>Staff Login</span>
                   <span>→</span>
                 </Link>
+              </div>
+
+              {/* Mobile Social Links */}
+              <div className="flex items-center justify-center gap-3 pt-2 border-t border-white/5">
+                <a
+                  href="https://www.instagram.com/life_time_fitnesss"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 rounded-lg bg-white/5 px-3 py-1.5 text-xs font-semibold text-slate-300 hover:text-pink-400 hover:bg-white/10 transition"
+                >
+                  <InstagramIcon className="size-3.5 text-pink-500" />
+                  <span>Instagram</span>
+                </a>
+                <a
+                  href="https://www.youtube.com/@LifeTime_Fitness_Gym_Pune"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 rounded-lg bg-white/5 px-3 py-1.5 text-xs font-semibold text-slate-300 hover:text-red-400 hover:bg-white/10 transition"
+                >
+                  <YoutubeIcon className="size-3.5 text-red-500" />
+                  <span>YouTube</span>
+                </a>
               </div>
             </div>
           </div>

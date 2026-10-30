@@ -8,6 +8,7 @@ import {
   MessageCircle,
   Phone,
 } from "lucide-react";
+import { InstagramIcon, YoutubeIcon } from "./social-icons";
 
 export function LocationContact() {
   return (
@@ -71,6 +72,33 @@ export function LocationContact() {
                 <div>
                   <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Direct Phone</span>
                   <p className="text-base font-black text-white">8446648527</p>
+                </div>
+              </div>
+
+              {/* Official Social Channels */}
+              <div className="mt-6 rounded-2xl bg-white/5 p-4 border border-white/5 space-y-2.5">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-red-400 block">
+                  Official Social Channels
+                </span>
+                <div className="grid grid-cols-2 gap-2.5">
+                  <a
+                    href="https://www.instagram.com/life_time_fitnesss"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2.5 rounded-xl bg-black/40 border border-white/10 p-2.5 text-xs font-semibold text-slate-200 hover:border-pink-500/50 hover:text-white hover:bg-pink-950/30 transition shadow-sm"
+                  >
+                    <InstagramIcon className="size-4 text-pink-500 shrink-0" />
+                    <span className="truncate">Instagram</span>
+                  </a>
+                  <a
+                    href="https://www.youtube.com/@LifeTime_Fitness_Gym_Pune"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2.5 rounded-xl bg-black/40 border border-white/10 p-2.5 text-xs font-semibold text-slate-200 hover:border-red-500/50 hover:text-white hover:bg-red-950/30 transition shadow-sm"
+                  >
+                    <YoutubeIcon className="size-4 text-red-500 shrink-0" />
+                    <span className="truncate">YouTube</span>
+                  </a>
                 </div>
               </div>
             </div>

@@ -99,7 +99,11 @@ export default async function HomePage() {
       longitude: "73.8592322",
     },
     url: "https://lifetimefitnessgym.com",
-    sameAs: ["https://wa.me/918446648527"],
+    sameAs: [
+      "https://wa.me/918446648527",
+      "https://www.instagram.com/life_time_fitnesss",
+      "https://www.youtube.com/@LifeTime_Fitness_Gym_Pune",
+    ],
     openingHoursSpecification: [
       {
         "@type": "OpeningHoursSpecification",

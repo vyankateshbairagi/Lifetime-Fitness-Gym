@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Lock, Phone, Sparkles } from "lucide-react";
+import { InstagramIcon, YoutubeIcon } from "./social-icons";
 
 export function AnnouncementBar() {
   return (
@@ -23,8 +24,31 @@ export function AnnouncementBar() {
           </a>
         </div>
 
-        {/* Right: Phone & Staff Login */}
-        <div className="flex items-center gap-2.5 sm:gap-5">
+        {/* Right: Phone, Social Links & Staff Login */}
+        <div className="flex items-center gap-2.5 sm:gap-4">
+          <div className="flex items-center gap-2">
+            <a
+              href="https://www.instagram.com/life_time_fitnesss"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-slate-400 hover:text-pink-400 transition"
+              aria-label="Instagram @life_time_fitnesss"
+            >
+              <InstagramIcon className="size-3.5" />
+            </a>
+            <a
+              href="https://www.youtube.com/@LifeTime_Fitness_Gym_Pune"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-slate-400 hover:text-red-500 transition"
+              aria-label="YouTube @LifeTime_Fitness_Gym_Pune"
+            >
+              <YoutubeIcon className="size-3.5" />
+            </a>
+          </div>
+
+          <div className="h-3 w-px bg-white/10" aria-hidden="true" />
+
           <a
             href="tel:+918446648527"
             className="inline-flex items-center gap-1 font-medium text-slate-300 transition hover:text-red-400"

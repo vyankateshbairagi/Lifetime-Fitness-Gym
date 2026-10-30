@@ -9,6 +9,7 @@ import {
   Phone,
   Sparkles,
 } from "lucide-react";
+import { InstagramIcon, YoutubeIcon } from "./social-icons";
 
 const FOOTER_LINKS = [
   { label: "Home", href: "/#" },
@@ -62,6 +63,35 @@ export function Footer() {
                 <Dumbbell className="size-3.5" />
                 <span>Free Trial Pass</span>
               </Link>
+            </div>
+
+            {/* Social Media Links */}
+            <div className="mt-6 pt-5 border-t border-white/10">
+              <span className="text-[11px] font-black uppercase tracking-[0.2em] text-red-500 block mb-2.5">
+                Follow & Connect
+              </span>
+              <div className="flex flex-wrap items-center gap-2.5">
+                <a
+                  href="https://www.instagram.com/life_time_fitnesss"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-xs font-semibold text-slate-300 hover:border-pink-500/50 hover:bg-pink-950/30 hover:text-white transition shadow-sm"
+                  aria-label="Follow LifeTime Fitness Gym on Instagram"
+                >
+                  <InstagramIcon className="size-4 text-pink-500 transition group-hover:scale-110" />
+                  <span>Instagram</span>
+                </a>
+                <a
+                  href="https://www.youtube.com/@LifeTime_Fitness_Gym_Pune"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-xs font-semibold text-slate-300 hover:border-red-500/50 hover:bg-red-950/30 hover:text-white transition shadow-sm"
+                  aria-label="Subscribe to LifeTime Fitness Gym on YouTube"
+                >
+                  <YoutubeIcon className="size-4 text-red-500 transition group-hover:scale-110" />
+                  <span>YouTube</span>
+                </a>
+              </div>
             </div>
           </div>
 

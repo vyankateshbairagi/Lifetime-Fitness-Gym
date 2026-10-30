@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import { Eye, X } from "lucide-react";
+import { InstagramIcon, YoutubeIcon } from "./social-icons";
 
 interface GalleryItem {
   id: string;
@@ -150,6 +151,41 @@ export function Gallery() {
               </div>
             </button>
           ))}
+        </div>
+
+        {/* Social Media Videos & Reels Banner */}
+        <div className="mt-8 rounded-2xl border border-white/10 bg-[#120a0b] p-4 sm:p-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left shadow-lg">
+          <div>
+            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-red-500 block">
+              Watch Real Training Videos & Reels
+            </span>
+            <h4 className="mt-0.5 text-sm sm:text-base font-black uppercase text-white">
+              Follow LifeTime Fitness On Social Media
+            </h4>
+            <p className="mt-0.5 text-xs text-slate-300">
+              Catch daily workouts, transformation stories, and training tips from Coach Dhirendra Pande.
+            </p>
+          </div>
+          <div className="flex items-center gap-2.5 shrink-0">
+            <a
+              href="https://www.instagram.com/life_time_fitnesss"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 rounded-xl border border-pink-500/40 bg-pink-950/30 px-3.5 py-2 text-xs font-bold uppercase tracking-wider text-pink-200 hover:bg-pink-600 hover:text-white transition shadow-sm"
+            >
+              <InstagramIcon className="size-4 text-pink-400" />
+              <span>@life_time_fitnesss</span>
+            </a>
+            <a
+              href="https://www.youtube.com/@LifeTime_Fitness_Gym_Pune"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 rounded-xl border border-red-500/40 bg-red-950/30 px-3.5 py-2 text-xs font-bold uppercase tracking-wider text-red-200 hover:bg-red-600 hover:text-white transition shadow-sm"
+            >
+              <YoutubeIcon className="size-4 text-red-400" />
+              <span>YouTube Channel</span>
+            </a>
+          </div>
         </div>
       </div>
 
